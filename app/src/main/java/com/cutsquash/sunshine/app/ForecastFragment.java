@@ -63,18 +63,16 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            // Get the current location
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = settings.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
-
-            Log.v(TAG, location);
-
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute(location);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -87,18 +85,10 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray = {
-                "Today - something",
-                "Tomorrow - amazing",
-                "Later - terrible"
-        };
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
-
         mForecastAdapter = new ArrayAdapter<String>(getActivity(),
                                                                 R.layout.list_item_forecast,
                                                                 R.id.list_item_forecast_textview,
-                                                                weekForecast);
+                                                                new ArrayList<String>());
 
         ListView mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mListView.setAdapter(mForecastAdapter);
@@ -116,6 +106,16 @@ public class ForecastFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    private void updateWeather() {
+        // Get the current location
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = settings.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        weatherTask.execute(location);
     }
 
 
