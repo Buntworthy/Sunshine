@@ -29,9 +29,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +76,19 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_refresh) {
             updateWeather();
             return true;
+        } else if (id == R.id.action_map) {
+            // Show the users location on a map
+            // Get the user location
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = settings.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+            Uri geolocation = Uri.parse("geo:0,0?q=" + location).buildUpon().build();
+
+            // Start an intent to show the location
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW);
+            mapIntent.setData(geolocation);
+            startActivity(mapIntent);
+
         }
         return super.onOptionsItemSelected(item);
     }
