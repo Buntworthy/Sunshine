@@ -87,7 +87,9 @@ public class ForecastFragment extends Fragment {
             // Start an intent to show the location
             Intent mapIntent = new Intent(Intent.ACTION_VIEW);
             mapIntent.setData(geolocation);
-            startActivity(mapIntent);
+            if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(mapIntent);
+            }
 
         }
         return super.onOptionsItemSelected(item);
